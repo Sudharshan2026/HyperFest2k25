@@ -1,0 +1,125 @@
+import React, { useState, useContext } from 'react';
+import { AppContext } from '../../contexts/AppContext';
+import { AuthContext } from '../../contexts/AuthContext';
+import { login as loginApi, getUserByEmail } from '../../api/authApi';
+import { useNavigate } from 'react-router-dom';
+import Modal from './Modal';
+
+const LoginModal = ({ isOpen, onClose }) => {
+    const navigate = useNavigate();
+    const { showAlert, showSuccessModal } = useContext(AppContext);
+    const { login: authContextLogin } = useContext(AuthContext);
+    
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        
+        try {
+            const response = await getUserByEmail(email);
+            const user = response.data;
+            
+            if (!user) {
+                throw new Error('User not found. Please register first.');
+            }
+
+            // Extract last 4 digits of the phone number
+            const userPhone = user.phone;
+            const last4Digits = userPhone.slice(-4);
+
+            // Verify if password matches last 4 digits
+            if (password !== last4Digits) {
+                throw new Error('Invalid password. Please use the last 4 digits of your registered phone number.');
+            }
+
+            // Proceed with login
+            const loginResponse = await loginApi({ email, password: last4Digits });
+            const { token, user: userData } = loginResponse.data;
+
+            // Store auth data
+            await authContextLogin(token, userData);
+            
+            // Close modal
+            onClose();
+            
+            // Show success message
+            showSuccessModal('Login Successful!', 'Welcome back to TechnoFest!');
+
+            // Redirect based on user role
+            if (userData.role === 'admin') {
+                navigate('/admin');
+            } else if (userData.role === 'organizer') {
+                navigate('/organizer');
+            } else {
+                navigate('/myaccount');
+            }
+
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || error.message || 'Login failed. Please try again.';
+            showAlert(errorMessage, 'error');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} title="Login to TechnoFest">
+            <div className="login-container p-6">
+                <div className="bg-blue-50 p-4 rounded-md mb-6">
+                    <h3 className="text-blue-700 font-medium mb-2">Login Instructions:</h3>
+                    <ul className="text-sm text-blue-600 space-y-1">
+                        <li>• Enter your registered email address</li>
+                        <li>• Use the last 4 digits of your registered phone number as password</li>
+                        <li>• Example: If phone is 9876543210, use 3210 as password</li>
+                    </ul>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="form-group">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                            Email Address
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            required
+                            placeholder="Enter your registered email"
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                            Password
+                            <span className="text-xs text-gray-500 ml-2">(last 4 digits of phone)</span>
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            required
+                            maxLength="4"
+                            pattern="[0-9]{4}"
+                            placeholder="Enter last 4 digits of phone"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                    >
+                        {isLoading ? 'Logging in...' : 'Login'}
+                    </button>
+                </form>
+            </div>
+        </Modal>
+    );
+};
+
+export default LoginModal;

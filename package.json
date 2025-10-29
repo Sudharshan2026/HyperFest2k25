@@ -1,0 +1,13 @@
+{
+  "name": "technofest-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Monorepo for TechnoFest frontend (Vite + React) and backend (Express + MySQL)",
+  "scripts": {
+    "frontend:dev": "npm --prefix technofest-frontend run dev",
+    "frontend:build": "npm --prefix technofest-frontend run build",
+    "frontend:preview": "npm --prefix technofest-frontend run preview",
+    "backend:start": "npm --prefix technofest-backend run start",
+    "build": "npm run frontend:build"
+  }
+}

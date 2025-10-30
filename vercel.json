@@ -10,14 +10,10 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "dest": "technofest-frontend/dist/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "technofest-frontend/dist/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

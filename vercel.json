@@ -5,7 +5,9 @@
     {
       "src": "technofest-frontend/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
+      "config": {
+        "distDir": "dist"
+      }
     },
     {
       "src": "technofest-backend/server.js",
@@ -22,7 +24,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "technofest-frontend/index.html"
     }
   ]
 }

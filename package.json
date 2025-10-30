@@ -8,6 +8,7 @@
     "frontend:build": "npm --prefix technofest-frontend run build",
     "frontend:preview": "npm --prefix technofest-frontend run preview",
     "backend:start": "npm --prefix technofest-backend run start",
-    "build": "npm run frontend:build"
+    "build": "npm run frontend:build",
+    "vercel-build": "npm install --prefix technofest-frontend && npm run build --prefix technofest-frontend"
   }
 }

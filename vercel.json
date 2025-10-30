@@ -20,11 +20,12 @@
       "dest": "technofest-backend/server.js"
     },
     {
-      "handle": "filesystem"
+      "src": "/assets/(.*)",
+      "dest": "technofest-frontend/dist/assets/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "technofest-frontend/index.html"
+      "dest": "technofest-frontend/dist/index.html"
     }
   ]
 }

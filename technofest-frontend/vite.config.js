@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // Vite config with dev proxy to backend API to avoid CORS in development
 export default defineConfig({
+  base: './',
   plugins: [react()],
   server: {
     proxy: {

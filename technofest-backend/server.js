@@ -51,17 +51,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/registrations', registrationRoutes);
 
-// Database connection check
-connection
-  .getConnection()
-  .then((conn) => {
-    conn.release();
-    console.log('✅ Successfully connected to the MySQL database.');
-  })
-  .catch((err) => {
-    console.error('❌ Error connecting to MySQL database:', err.stack || err.message);
-    process.exit(1);
-  });
+// The immediate database connection check is removed to prevent crashes on Vercel.
+// The app will start, but API routes will fail until a cloud database is configured.
 
 // Root route
 app.get('/', (req, res) => res.send('Server is running'));

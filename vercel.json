@@ -5,24 +5,19 @@
     {
       "src": "technofest-frontend/package.json",
       "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
-    },
-    {
-      "src": "technofest-backend/server.js",
-      "use": "@vercel/node"
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "technofest-backend/server.js"
-    },
-    {
-      "handle": "filesystem"
+      "src": "/assets/(.*)",
+      "dest": "technofest-frontend/dist/assets/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "technofest-frontend/dist/index.html"
     }
   ]
 }
